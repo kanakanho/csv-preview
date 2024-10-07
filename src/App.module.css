@@ -1,0 +1,13 @@
+.csvContainer {
+  display: grid;
+  --keyLength: 1;
+
+  grid-template-columns: repeat(var(--keyLength), 1fr);
+
+  border: 1px solid black;
+}
+
+.csvBox {
+  border: 0.5px solid black;
+  padding: 4px;
+}

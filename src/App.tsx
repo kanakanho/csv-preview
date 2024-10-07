@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import styles from "./App.module.css";
+import CSVReader, { type IFileInfo } from "react-csv-reader";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [fileInfo, setFileInfo] = useState<IFileInfo>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<any[]>([]);
+  const [keyLength, setKeyLength] = useState<number>(0);
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <CSVReader
+        parserOptions={{ header: true }}
+        onFileLoaded={(data, fileInfo) => {
+          setFileInfo(fileInfo);
+          setData(data);
+          setKeyLength(Object.keys(data[0]).length);
+          console.dir(data);
+        }}
+      />
+      <h2>{fileInfo?.name}</h2>
+      <div className={styles.csvContainer} style={{ "--keyLength": keyLength } as React.CSSProperties}>
+        {data.length > 0 &&
+          Object.keys(data[0]).map((key) => (
+            <div className={styles.csvBox} key={key}>
+              {key}
+            </div>
+          ))}
+        {data.map((row, rowIndex) =>
+          Object.keys(row).map((key) => (
+            <div className={styles.csvBox} key={`${rowIndex}-${key}`}>
+              {row[key]}
+            </div>
+          ))
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
